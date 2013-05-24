@@ -24,6 +24,8 @@
             suffixTextSingular: '',
             before: true,
             visible: true,
+            alwaysOn: true,
+            showThres: 0,
         };
         
         options = $.extend(defaults, options);
@@ -40,12 +42,18 @@
             var maxlength = $input.attr('maxlength');
             
             var addCounter = function() {
+                var counter;
+                if (options.showThres > 0) {
+                    counterDiv = '<div style="display:none;" />';
+                } else {
+                    counterDiv = '<div />';
+                }
                 // Create counter in given position
                 if (options.before) {
-                    $input.before('<div />');
+                    $input.before(counterDiv);
                     $counter = $input.prev('div');
                 } else {
-                    $input.after('<div />');
+                    $input.after(counterDiv);
                     $counter = $input.next('div');
                 }
                 
@@ -53,29 +61,62 @@
                 $counter.addClass(options.countClass).text(maxlength + ' ' + options.suffixText);
             };
             
-            var removeCounter = function() {
-                // Remove counter in given position
-                $counter.remove();
+            var hideCounter = function() {
+                $input.off('blur');
+                // Remove counter
+                $counter.hide();
+                
+                $input.on('focus', showCounter);
+            };
+            var showCounter = function() {
+                $input.off('focus');
+                // Show previously added counter
+                if (options.showThres === 0 || (maxlength - $input.val().length) <= options.showThres) {
+                    $counter.show();
+                }
+                
+                $input.on('blur', hideCounter);
             };
             
             var countMe = function() {
                 var left = maxlength - $input.val().length;
                 $counter.text( left + ' ' + (left === 1 ? options.suffixTextSingular : options.suffixText) );
+                
+                // Show/hide counter if we have a show threshold set
+                if (options.showThres > 0) {
+                    if (left <= options.showThres) {
+                        $counter.show();
+                    } else if (!options.alwaysOn) {
+                        $counter.hide();
+                    }
+                }
             };
 
             // Only need a counter if input has maxlength
             if (maxlength !== undefined && maxlength > 0) {
                 if (options.visible) {
-                    // Add counter, bind changing event
+                    // Counter is visible from the start, so add the counter now
                     addCounter();
                     $input.on('keyup blur', countMe);
                 } else {
-                    $input.on('focus', function() {
-                        $(this).off('focus');
-                        // Add counter, bind changing event
-                        addCounter();
-                        $input.on('keyup blur', countMe);
-                    });
+                    // Counter will hide until input is focused
+                    // ...but first, check if we want the counter to stay visible
+                    if (options.alwaysOn) {
+                        $input.on('focus', function() {
+                            $(this).off('focus');
+                            // Add counter, bind changing event
+                            addCounter();
+                            $input.on('keyup blur', countMe);
+                        });
+                    } else {
+                        $input.on('focus', function() {
+                            $(this).off('focus');
+                            // Add counter, bind changing event
+                            addCounter();
+                            $input.on('keyup blur', countMe);
+                        });
+                        $input.on('blur', hideCounter);
+                    }
                 }
             }
         });
