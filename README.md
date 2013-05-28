@@ -6,6 +6,7 @@ Gives users a visual warning about `maxlength`s on form input elements. As seen 
 ## Download
 
 [Production (minified)](https://raw.github.com/LunchTable/jquery-maxlengthcountdown/master/jquery.maxlengthCountdown.min.js)
+
 [Development](https://raw.github.com/LunchTable/jquery-maxlengthcountdown/master/jquery.maxlengthCountdown.js)
 
 ## Options
