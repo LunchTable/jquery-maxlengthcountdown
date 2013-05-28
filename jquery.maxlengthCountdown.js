@@ -62,20 +62,20 @@
             };
             
             var hideCounter = function() {
-                $input.off('blur');
+                $input.off('blur.mlcd');
                 // Remove counter
                 $counter.hide();
                 
-                $input.on('focus', showCounter);
+                $input.on('focus.mlcd', showCounter);
             };
             var showCounter = function() {
-                $input.off('focus');
+                $input.off('focus.mlcd');
                 // Show previously added counter
                 if (options.showThres === 0 || (maxlength - $input.val().length) <= options.showThres) {
                     $counter.show();
                 }
                 
-                $input.on('blur', hideCounter);
+                $input.on('blur.mlcd', hideCounter);
             };
             
             var countMe = function() {
@@ -97,25 +97,25 @@
                 if (options.visible) {
                     // Counter is visible from the start, so add the counter now
                     addCounter();
-                    $input.on('keyup blur', countMe);
+                    $input.on('keyup.mlcd blur.mlcd', countMe);
                 } else {
                     // Counter will hide until input is focused
                     // ...but first, check if we want the counter to stay visible
                     if (options.alwaysOn) {
-                        $input.on('focus', function() {
-                            $(this).off('focus');
+                        $input.on('focus.mlcd', function() {
+                            $(this).off('focus.mlcd');
                             // Add counter, bind changing event
                             addCounter();
-                            $input.on('keyup blur', countMe);
+                            $input.on('keyup.mlcd blur.mlcd', countMe);
                         });
                     } else {
-                        $input.on('focus', function() {
-                            $(this).off('focus');
+                        $input.on('focus.mlcd', function() {
+                            $(this).off('focus.mlcd');
                             // Add counter, bind changing event
                             addCounter();
-                            $input.on('keyup blur', countMe);
+                            $input.on('keyup.mlcd blur.mlcd', countMe);
                         });
-                        $input.on('blur', hideCounter);
+                        $input.on('blur.mlcd', hideCounter);
                     }
                 }
             }
